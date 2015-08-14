@@ -7,7 +7,6 @@
                 "src/device.cc"
             ],
             "include_dirs": [
-                "src/hackrf/host/libhackrf/src",
                 "<!(node -e \"require('nan')\")"
             ],
             "dependencies": [ "libhackrf"  ],
@@ -24,7 +23,7 @@
         {
             "target_name": "libhackrf",
             "type": "static_library",
-            "sources": [ "src/hackrf/host/libhackrf/src/hackrf.c" ],
+            "sources": [ "src/hackrf.c" ],
             "include_dirs": [ "node_modules/usb/libusb/libusb" ],
             "dependencies": [ "node_modules/usb/libusb.gypi:libusb" ]
         }
