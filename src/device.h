@@ -25,6 +25,7 @@ class Device : public Nan::ObjectWrap {
   static void SetFrequency(const Nan::FunctionCallbackInfo<v8::Value>& info);
   static void GetVersion(const Nan::FunctionCallbackInfo<v8::Value>& info);
   static void StartRx(const Nan::FunctionCallbackInfo<v8::Value>& info);
+  static void StopRx(const Nan::FunctionCallbackInfo<v8::Value>& info);
 
   static int OnRx(hackrf_transfer* transfer);
   static void CallRxCallback(uv_async_t* async);

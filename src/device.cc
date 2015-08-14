@@ -17,6 +17,7 @@ void Device::Init() {
   Nan::SetPrototypeMethod(tpl, "setFrequency", SetFrequency);
   Nan::SetPrototypeMethod(tpl, "getVersion", GetVersion);
   Nan::SetPrototypeMethod(tpl, "startRx", StartRx);
+  Nan::SetPrototypeMethod(tpl, "stopRx", StopRx);
 
   constructor.Reset(tpl->GetFunction());
 }
@@ -61,6 +62,12 @@ void Device::StartRx(const Nan::FunctionCallbackInfo<Value>& info) {
   Device* d = ObjectWrap::Unwrap<Device>(info.Holder());
   d->onRx = new Nan::Callback(info[0].As<Function>());
   hackrf_start_rx(d->device, Device::OnRx, d);
+  info.GetReturnValue().Set(info.Holder());
+}
+
+void Device::StopRx(const Nan::FunctionCallbackInfo<Value>& info) {
+  Device* d = ObjectWrap::Unwrap<Device>(info.Holder());
+  hackrf_stop_rx(d->device);
   info.GetReturnValue().Set(info.Holder());
 }
 
