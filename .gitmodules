@@ -1,0 +1,6 @@
+[submodule "src/libusb"]
+	path = src/libusb
+	url = https://github.com/libusb/libusb
+[submodule "src/hackrf"]
+	path = src/hackrf
+	url = https://github.com/mossmann/hackrf

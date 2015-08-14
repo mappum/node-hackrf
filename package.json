@@ -1,0 +1,22 @@
+{
+  "name": "node-hackrf",
+  "version": "0.0.0",
+  "description": "Control a HackRF device (e.g. Jawbreaker, HackRF One, or Rad1o)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": "",
+  "keywords": [
+    "radio",
+    "sdr",
+    "hackrf",
+    "rad1o",
+    "ccc"
+  ],
+  "author": "Matt Bell <mappum@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "bindings": "^1.2.1"
+  }
+}
