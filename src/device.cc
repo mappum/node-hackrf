@@ -73,6 +73,7 @@ int Device::OnRx(hackrf_transfer* transfer) {
 }
 
 void Device::CallRxCallback(uv_async_t* async) {
+  Nan::HandleScope scope;
   hackrf_transfer* transfer = (hackrf_transfer*) async->data;
   Device* d = (Device*) transfer->rx_ctx;
   Local<Object> buffer = Nan::CopyBuffer((const char*) transfer->buffer, transfer->buffer_length).ToLocalChecked();
