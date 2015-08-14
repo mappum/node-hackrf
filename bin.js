@@ -26,7 +26,7 @@ if (argv.lnaGain) d.setLNAGain(argv.lnaGain)
 if (argv.vgaGain) d.setVGAGain(argv.vgaGain)
 if (argv.txGain) d.setTxGain(argv.txGain)
 
-if (argv.startrx) {
+if (argv.rxgraph) {
   d.startRx(function (data, cb) {
     var total = 0
     for(var i = 0; i < data.length; i++) total += data[i]
