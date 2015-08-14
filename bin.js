@@ -27,14 +27,22 @@ if (argv.lnaGain) d.setLNAGain(argv.lnaGain)
 if (argv.vgaGain) d.setVGAGain(argv.vgaGain)
 if (argv.txGain) d.setTxGain(argv.txGain)
 
-if (argv.startrx) {
+if (argv.rxgraph) {
   d.startRx(function (data) {
     var total = 0
     for(var i = 0; i < data.length; i++) total += data[i]
     if (total <= low) low = total
     if (total >= high) high = total
     var a = (total - low) / (high - low)
+    if (a) a = Math.pow(a, 4)
+    a = Math.max(0, a)
     console.log(new Array(Math.floor((a || 0) * 80)).join('#'))
+  })
+}
+
+if (argv.startrx) {
+  d.startRx(function (data) {
+    process.stdout.write(data)
   })
 }
 
