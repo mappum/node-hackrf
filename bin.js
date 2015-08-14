@@ -20,7 +20,6 @@ function parse (f) {
   return eval('(' + f + ')') // yolo
 }
 
-console.log(parse(argv.frequency))
 if (argv.frequency) d.setFrequency(parse(argv.frequency))
 if (argv.bandwidth) d.setBandwidth(parse(argv.bandwidth))
 if (argv['sample-rate']) d.setSampleRate(parse(argv['sample-rate']))
@@ -47,7 +46,7 @@ if (argv.starttx) {
   })
 
   setInterval(function () {
-    if (pulse === 0) pulse = 255
+    if (pulse === 0) pulse = 127
     else pulse = 0
     if (pulse) console.log('Sending pulse!')
     else console.log('Idling...')

@@ -140,7 +140,6 @@ int Device::OnTx(hackrf_transfer* transfer) {
   d->asyncTx.data = transfer;
   uv_async_send(&(d->asyncTx));
   semaphore_wait(&(d->semaphore));
-  int i = transfer->buffer[0];
   return 0;
 }
 
