@@ -24,7 +24,9 @@ void Device::Init() {
   Nan::SetPrototypeMethod(tpl, "startRx", StartRx);
   Nan::SetPrototypeMethod(tpl, "stopRx", StopRx);
   Nan::SetPrototypeMethod(tpl, "startTx", StartTx);
-  Nan::SetPrototypeMethod(tpl, "sendTx", SendTx);
+  Nan::SetPrototypeMethod(tpl, "stopTx", StopTx);
+  Nan::SetPrototypeMethod(tpl, "endTx", EndTx);
+  Nan::SetPrototypeMethod(tpl, "endRx", EndRx);
 
   constructor.Reset(tpl->GetFunction());
 }
@@ -121,7 +123,19 @@ void Device::StopRx(const Nan::FunctionCallbackInfo<Value>& info) {
   info.GetReturnValue().Set(info.Holder());
 }
 
-void Device::SendTx(const Nan::FunctionCallbackInfo<Value>& info) {
+void Device::StopTx(const Nan::FunctionCallbackInfo<Value>& info) {
+  Device* d = ObjectWrap::Unwrap<Device>(info.Holder());
+  hackrf_stop_tx(d->device);
+  info.GetReturnValue().Set(info.Holder());
+}
+
+void Device::EndRx(const Nan::FunctionCallbackInfo<Value>& info) {
+  Device* d = ObjectWrap::Unwrap<Device>(info.Holder());
+  semaphore_signal(&(d->semaphore));
+  info.GetReturnValue().Set(info.Holder());
+}
+
+void Device::EndTx(const Nan::FunctionCallbackInfo<Value>& info) {
   Device* d = ObjectWrap::Unwrap<Device>(info.Holder());
   hackrf_transfer* transfer = d->transfer;
 
@@ -143,7 +157,6 @@ int Device::OnTx(hackrf_transfer* transfer) {
   return 0;
 }
 
-
 int Device::OnRx(hackrf_transfer* transfer) {
   Device* d = (Device*) transfer->rx_ctx;
   d->asyncRx.data = transfer;
@@ -160,7 +173,6 @@ void Device::CallRxCallback(uv_async_t* async) {
   Local<Object> buffer = Nan::CopyBuffer((const char*) transfer->buffer, transfer->valid_length).ToLocalChecked();
   Local<Value> argv[] = { buffer };
   d->onRx->Call(1, argv);
-  semaphore_signal(&(d->semaphore));
 }
 
 void Device::CallTxCallback(uv_async_t* async) {

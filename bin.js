@@ -3,12 +3,11 @@
 var minimist = require('minimist')
 var argv = minimist(process.argv.slice(2))
 var hackrf = require('./')
+var d = hackrf()
 
 var pulse = 0
 var low = Infinity
 var high = 0
-
-d = hackrf.devices() // yolo gc fix
 
 console.log('hackrf version is %s', d.getVersion())
 
@@ -27,8 +26,8 @@ if (argv.lnaGain) d.setLNAGain(argv.lnaGain)
 if (argv.vgaGain) d.setVGAGain(argv.vgaGain)
 if (argv.txGain) d.setTxGain(argv.txGain)
 
-if (argv.rxgraph) {
-  d.startRx(function (data) {
+if (argv.startrx) {
+  d.startRx(function (data, cb) {
     var total = 0
     for(var i = 0; i < data.length; i++) total += data[i]
     if (total <= low) low = total
@@ -37,20 +36,21 @@ if (argv.rxgraph) {
     if (a) a = Math.pow(a, 4)
     a = Math.max(0, a)
     console.log(new Array(Math.floor((a || 0) * 80)).join('#'))
+    cb()
   })
 }
 
 if (argv.startrx) {
-  d.startRx(function (data) {
+  d.startRx(function (data, cb) {
     process.stdout.write(data)
+    cb()
   })
 }
 
 if (argv.starttx) {
-  d.startTx(function (validBytes) {
-    var b = new Buffer(validBytes)
-    for (var i = 0; i < validBytes; i++) b[i] = pulse
-    d.sendTx(b)
+  d.startTx(function (b, cb) {
+    for (var i = 0; i < b.length; i++) b[i] = pulse
+    cb()
   })
 
   setInterval(function () {
@@ -58,5 +58,5 @@ if (argv.starttx) {
     else pulse = 0
     if (pulse) console.log('Sending pulse!')
     else console.log('Idling...')
-  }, 1000)
+  }, 200)
 }

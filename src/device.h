@@ -36,8 +36,10 @@ class Device : public Nan::ObjectWrap {
   static void StartRx(const Nan::FunctionCallbackInfo<v8::Value>& info);
   static void StopRx(const Nan::FunctionCallbackInfo<v8::Value>& info);
   static void StartTx(const Nan::FunctionCallbackInfo<v8::Value>& info);
+  static void StopTx(const Nan::FunctionCallbackInfo<v8::Value>& info);
 
-  static void SendTx(const Nan::FunctionCallbackInfo<v8::Value>& info);
+  static void EndTx(const Nan::FunctionCallbackInfo<v8::Value>& info);
+  static void EndRx(const Nan::FunctionCallbackInfo<v8::Value>& info);
 
   static int OnRx(hackrf_transfer* transfer);
   static int OnTx(hackrf_transfer* transfer);
