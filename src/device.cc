@@ -76,7 +76,7 @@ void Device::CallRxCallback(uv_async_t* async) {
   Nan::HandleScope scope;
   hackrf_transfer* transfer = (hackrf_transfer*) async->data;
   Device* d = (Device*) transfer->rx_ctx;
-  Local<Object> buffer = Nan::CopyBuffer((const char*) transfer->buffer, transfer->buffer_length).ToLocalChecked();
+  Local<Object> buffer = Nan::CopyBuffer((const char*) transfer->buffer, transfer->valid_length).ToLocalChecked();
   Local<Value> argv[] = { buffer };
   d->onRx->Call(1, argv);
   semaphore_signal(&(d->semaphore));
