@@ -8,6 +8,10 @@ d = hackrf.devices() // yolo gc fix
 
 console.log(d.getVersion())
 
-d.startRx(function (data) {
-  console.log(data)
+d.setFrequency(1e9)
+d.startTx(function (max) {
+  var buf = new Buffer(max)
+  for (var i = 0; i < max; i++) buf[i] = 255
+  console.log('sending',buf)
+  d.sendTx(buf)
 })
