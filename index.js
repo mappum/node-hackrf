@@ -58,7 +58,7 @@ module.exports = function () {
     api.device.startTx(function (max) {
       if (max > buf.length) buf = new Buffer(max)
       cb(max !== buf.length ? buf.slice(0, max) : buf, function () {
-        api.device.endTx()
+        api.device.endTx(buf)
       })
     })
   }
