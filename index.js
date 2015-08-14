@@ -1,6 +1,3 @@
-var SegfaultHandler = require('segfault-handler');
-SegfaultHandler.registerHandler();
-
 var hackrf = require('bindings')('hackrf')
 
 module.exports = function () {
