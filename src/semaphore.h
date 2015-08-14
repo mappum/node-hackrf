@@ -1,3 +1,5 @@
+
+#ifdef __APPLE__
 #include <semaphore.h>
 #include <dispatch/dispatch.h>
 
@@ -15,3 +17,23 @@ NAN_INLINE static void semaphore_wait (dispatch_semaphore_t *sem) {
 NAN_INLINE static void semaphore_signal (dispatch_semaphore_t *sem) {
   dispatch_semaphore_signal(*sem);
 }
+
+#else
+
+#include <semaphore.h>
+
+typedef sem_t bindings_sem_t;
+
+NAN_INLINE static int semaphore_init (sem_t *sem) {
+  return sem_init(sem, 0, 0);
+}
+
+NAN_INLINE static void semaphore_wait (sem_t *sem) {
+  sem_wait(sem);
+}
+
+NAN_INLINE static void semaphore_signal (sem_t *sem) {
+  sem_post(sem);
+}
+
+#endif
