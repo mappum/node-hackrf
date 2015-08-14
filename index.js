@@ -4,11 +4,10 @@ SegfaultHandler.registerHandler();
 var hackrf = require('bindings')('hackrf')
 module.exports = hackrf
 
-var d = hackrf.devices()
+d = hackrf.devices() // yolo gc fix
 
 console.log(d.getVersion())
-console.log(d.startRx(function (data) {
-  console.log(data)
-}))
 
-setInterval(function(){}, 10000000)
+d.startRx(function (data) {
+  console.log(data)
+})
