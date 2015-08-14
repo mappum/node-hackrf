@@ -24,6 +24,9 @@ console.log(parse(argv.frequency))
 if (argv.frequency) d.setFrequency(parse(argv.frequency))
 if (argv.bandwidth) d.setBandwidth(parse(argv.bandwidth))
 if (argv['sample-rate']) d.setSampleRate(parse(argv['sample-rate']))
+if (argv.lnaGain) d.setLNAGain(argv.lnaGain)
+if (argv.vgaGain) d.setVGAGain(argv.vgaGain)
+if (argv.txGain) d.setTxGain(argv.txGain)
 
 if (argv.startrx) {
   d.startRx(function (data) {
