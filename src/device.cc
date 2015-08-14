@@ -98,6 +98,7 @@ void Device::SendTx(const Nan::FunctionCallbackInfo<Value>& info) {
   char *data = node::Buffer::Data(buffer);
 
   memcpy(transfer->buffer, data, len);
+  semaphore_signal(&(d->semaphore));
 
   info.GetReturnValue().Set(info.Holder());
 }
@@ -138,5 +139,4 @@ void Device::CallTxCallback(uv_async_t* async) {
   Local<Number> n = Nan::New<Number>(transfer->valid_length);
   Local<Value> argv[] = { n };
   d->onTx->Call(1, argv);
-  semaphore_signal(&(d->semaphore));
 }
