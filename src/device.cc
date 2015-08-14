@@ -16,6 +16,9 @@ void Device::Init() {
 
   Nan::SetPrototypeMethod(tpl, "setFrequency", SetFrequency);
   Nan::SetPrototypeMethod(tpl, "setBandwidth", SetBandwidth);
+  Nan::SetPrototypeMethod(tpl, "setLNAGain", SetLNAGain);
+  Nan::SetPrototypeMethod(tpl, "setVGAGain", SetVGAGain);
+  Nan::SetPrototypeMethod(tpl, "setTxGain", SetTxGain);
   Nan::SetPrototypeMethod(tpl, "setSampleRate", SetSampleRate);
   Nan::SetPrototypeMethod(tpl, "getVersion", GetVersion);
   Nan::SetPrototypeMethod(tpl, "startRx", StartRx);
@@ -65,6 +68,27 @@ void Device::SetSampleRate(const Nan::FunctionCallbackInfo<Value>& info) {
   Device* d = ObjectWrap::Unwrap<Device>(info.Holder());
   uint64_t freq = uint64_t(info[0]->Uint32Value());
   hackrf_set_sample_rate_manual(d->device, freq, 1);
+  info.GetReturnValue().Set(info.Holder());
+}
+
+void Device::SetLNAGain(const Nan::FunctionCallbackInfo<Value>& info) {
+  Device* d = ObjectWrap::Unwrap<Device>(info.Holder());
+  uint64_t level = uint64_t(info[0]->Uint32Value());
+  hackrf_set_lna_gain(d->device, level);
+  info.GetReturnValue().Set(info.Holder());
+}
+
+void Device::SetVGAGain(const Nan::FunctionCallbackInfo<Value>& info) {
+  Device* d = ObjectWrap::Unwrap<Device>(info.Holder());
+  uint64_t level = uint64_t(info[0]->Uint32Value());
+  hackrf_set_vga_gain(d->device, level);
+  info.GetReturnValue().Set(info.Holder());
+}
+
+void Device::SetTxGain(const Nan::FunctionCallbackInfo<Value>& info) {
+  Device* d = ObjectWrap::Unwrap<Device>(info.Holder());
+  uint64_t level = uint64_t(info[0]->Uint32Value());
+  hackrf_set_txvga_gain(d->device, level);
   info.GetReturnValue().Set(info.Holder());
 }
 
