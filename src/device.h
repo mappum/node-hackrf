@@ -27,6 +27,7 @@ class Device : public Nan::ObjectWrap {
   static Nan::Persistent<v8::Function> constructor;
   static void New(const Nan::FunctionCallbackInfo<v8::Value>& info);
   static void SetFrequency(const Nan::FunctionCallbackInfo<v8::Value>& info);
+  static void SetBandwidth(const Nan::FunctionCallbackInfo<v8::Value>& info);
   static void GetVersion(const Nan::FunctionCallbackInfo<v8::Value>& info);
   static void StartRx(const Nan::FunctionCallbackInfo<v8::Value>& info);
   static void StopRx(const Nan::FunctionCallbackInfo<v8::Value>& info);
