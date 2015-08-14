@@ -16,6 +16,7 @@ void Device::Init() {
 
   Nan::SetPrototypeMethod(tpl, "setFrequency", SetFrequency);
   Nan::SetPrototypeMethod(tpl, "setBandwidth", SetBandwidth);
+  Nan::SetPrototypeMethod(tpl, "setSampleRate", SetSampleRate);
   Nan::SetPrototypeMethod(tpl, "getVersion", GetVersion);
   Nan::SetPrototypeMethod(tpl, "startRx", StartRx);
   Nan::SetPrototypeMethod(tpl, "stopRx", StopRx);
@@ -57,6 +58,13 @@ void Device::SetBandwidth(const Nan::FunctionCallbackInfo<Value>& info) {
   Device* d = ObjectWrap::Unwrap<Device>(info.Holder());
   uint64_t bandwidth = uint64_t(info[0]->Uint32Value());
   hackrf_set_baseband_filter_bandwidth(d->device, bandwidth);
+  info.GetReturnValue().Set(info.Holder());
+}
+
+void Device::SetSampleRate(const Nan::FunctionCallbackInfo<Value>& info) {
+  Device* d = ObjectWrap::Unwrap<Device>(info.Holder());
+  uint64_t freq = uint64_t(info[0]->Uint32Value());
+  hackrf_set_sample_rate_manual(d->device, freq, 1);
   info.GetReturnValue().Set(info.Holder());
 }
 
@@ -108,6 +116,8 @@ int Device::OnTx(hackrf_transfer* transfer) {
   d->asyncTx.data = transfer;
   uv_async_send(&(d->asyncTx));
   semaphore_wait(&(d->semaphore));
+  int i = transfer->buffer[0];
+  printf("sending... %i\n",i);
   return 0;
 }
 
