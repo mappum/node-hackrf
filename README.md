@@ -16,21 +16,17 @@ Returns the first device found
 
 Returns the `hackrf` native version.
 
-#### `device.setFrequency(hz)`
+#### `device.setFrequency(hz, [callback])`
 
 Set the frequency. `hz` should be an integer
 
-#### `device.setBandwidth(hz)`
+#### `device.setBandwidth(hz, [callback])`
 
 Set the bandwidth. `hz` should be an integer
 
-#### `device.setSampleRate(hz)`
+#### `device.setSampleRate(hz, [callback])`
 
 Set the sample rate. `hz` should be an integer
-
-#### `device.setFrequency(hz)`
-
-Set the frequency. `hz` should be an integer
 
 #### `device.setLNAGain(val)`
 

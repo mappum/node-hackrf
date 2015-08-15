@@ -2,6 +2,39 @@
 
 using namespace v8;
 
+class HackWorker : public Nan::AsyncWorker {
+ public:
+  HackWorker(Nan::Callback *callback, Device* d, int method, int arg)
+    : Nan::AsyncWorker(callback), d(d), method(method), arg(arg) {}
+  ~HackWorker() {}
+
+  void Execute () {
+    switch (method) {
+      case 0:
+      hackrf_set_freq(d->device, arg);
+      break;
+
+      case 1:
+      hackrf_set_baseband_filter_bandwidth(d->device, arg);
+      break;
+
+      case 2:
+      hackrf_set_sample_rate_manual(d->device, arg, 1);
+      break;
+    }
+  }
+
+  void HandleOKCallback () {
+    Nan::HandleScope scope;
+    callback->Call(0, NULL);
+  }
+
+ private:
+  Device* d;
+  int method;
+  int arg;
+};
+
 Device::Device() {};
 Device::~Device() {};
 
@@ -55,21 +88,24 @@ Local<Object> Device::NewInstance(hackrf_device* hd) {
 void Device::SetFrequency(const Nan::FunctionCallbackInfo<Value>& info) {
   Device* d = ObjectWrap::Unwrap<Device>(info.Holder());
   uint64_t freq = uint64_t(info[0]->Uint32Value());
-  hackrf_set_freq(d->device, freq);
+  Local<Function> callback = info[1].As<Function>();
+  Nan::AsyncQueueWorker(new HackWorker(new Nan::Callback(callback), d, 0, freq));
   info.GetReturnValue().Set(info.Holder());
 }
 
 void Device::SetBandwidth(const Nan::FunctionCallbackInfo<Value>& info) {
   Device* d = ObjectWrap::Unwrap<Device>(info.Holder());
   uint64_t bandwidth = uint64_t(info[0]->Uint32Value());
-  hackrf_set_baseband_filter_bandwidth(d->device, bandwidth);
+  Local<Function> callback = info[1].As<Function>();
+  Nan::AsyncQueueWorker(new HackWorker(new Nan::Callback(callback), d, 1, bandwidth));
   info.GetReturnValue().Set(info.Holder());
 }
 
 void Device::SetSampleRate(const Nan::FunctionCallbackInfo<Value>& info) {
   Device* d = ObjectWrap::Unwrap<Device>(info.Holder());
   uint64_t freq = uint64_t(info[0]->Uint32Value());
-  hackrf_set_sample_rate_manual(d->device, freq, 1);
+  Local<Function> callback = info[1].As<Function>();
+  Nan::AsyncQueueWorker(new HackWorker(new Nan::Callback(callback), d, 2, freq));
   info.GetReturnValue().Set(info.Holder());
 }
 

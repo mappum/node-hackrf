@@ -8,19 +8,19 @@ module.exports = function () {
     return api.device.getVersion()
   }
 
-  api.setFrequency = function (n) {
+  api.setFrequency = function (n, cb) {
     if (typeof n !== 'number') throw new Error('Frequency should be a number')
-    api.device.setFrequency(n)
+    api.device.setFrequency(n, cb || noop)
   }
 
-  api.setBandwidth = function (n) {
+  api.setBandwidth = function (n, cb) {
     if (typeof n !== 'number') throw new Error('Bandwidth should be a number')
-    api.device.setBandwidth(n)
+    api.device.setBandwidth(n, cb || noop)
   }
 
-  api.setSampleRate = function (n) {
+  api.setSampleRate = function (n, cb) {
     if (typeof n !== 'number') throw new Error('Sample rate should be a number')
-    api.device.setSampleRate(n)
+    api.device.setSampleRate(n, cb || noop)
   }
 
   api.setLNAGain = function (n) {
@@ -66,3 +66,5 @@ module.exports = function () {
 
   return api
 }
+
+function noop () {}
