@@ -33,7 +33,7 @@ if (argv.rxgraph) {
     if (total <= low) low = total
     if (total >= high) high = total
     var a = (total - low) / (high - low)
-    if (a) a = Math.pow(a, 4)
+    if (a) a = Math.pow(a, 2)
     a = Math.max(0, a)
     console.log(new Array(Math.floor((a || 0) * 80)).join('#'))
     cb()
@@ -50,13 +50,23 @@ if (argv.startrx) {
 if (argv.starttx) {
   d.startTx(function (b, cb) {
     for (var i = 0; i < b.length; i++) b[i] = pulse
+    pulse = 0
     cb()
   })
 
-  setInterval(function () {
-    if (pulse === 0) pulse = 127
-    else pulse = 0
-    if (pulse) console.log('Sending pulse!')
-    else console.log('Idling...')
-  }, 200)
+  if (argv.interactive) {
+    console.log('(`killall node` in another terminal to kill me)')
+    process.stdin.setRawMode(true)
+    process.stdin.on('data', function () {
+      pulse = 127
+      console.log('Sending....')
+    })
+  } else {
+    setInterval(function () {
+      if (pulse === 0) pulse = 127
+      else pulse = 0
+      if (pulse) console.log('Sending pulse!')
+      else console.log('Idling...')
+    }, 200)
+  }
 }
