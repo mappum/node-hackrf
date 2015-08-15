@@ -24,8 +24,8 @@
             "target_name": "libhackrf",
             "type": "static_library",
             "sources": [ "src/hackrf.c" ],
-            "include_dirs": [ "node_modules/usb/libusb/libusb" ],
-            "dependencies": [ "node_modules/usb/libusb.gypi:libusb" ]
+            "include_dirs": [ "deps/libusb/libusb" ],
+            "dependencies": [ "deps/libusb.gypi:libusb" ]
         }
     ]
 }
