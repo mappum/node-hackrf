@@ -4,7 +4,7 @@ using namespace v8;
 
 class HackWorker : public Nan::AsyncWorker {
  public:
-  HackWorker(Nan::Callback *callback, Device* d, int method, int arg)
+  HackWorker(Nan::Callback *callback, Device* d, int method, uint64_t arg)
     : Nan::AsyncWorker(callback), d(d), method(method), arg(arg) {}
   ~HackWorker() {}
 
@@ -32,7 +32,7 @@ class HackWorker : public Nan::AsyncWorker {
  private:
   Device* d;
   int method;
-  int arg;
+  uint64_t arg;
 };
 
 Device::Device() {};
