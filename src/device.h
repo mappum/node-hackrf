@@ -32,6 +32,8 @@ class Device : public Nan::ObjectWrap {
   static void SetLNAGain(const Nan::FunctionCallbackInfo<v8::Value>& info);
   static void SetVGAGain(const Nan::FunctionCallbackInfo<v8::Value>& info);
   static void SetTxGain(const Nan::FunctionCallbackInfo<v8::Value>& info);
+  static void SetAntennaEnable(const Nan::FunctionCallbackInfo<v8::Value>& info);
+  static void SetAmpEnable(const Nan::FunctionCallbackInfo<v8::Value>& info);
   static void SetSampleRate(const Nan::FunctionCallbackInfo<v8::Value>& info);
   static void GetVersion(const Nan::FunctionCallbackInfo<v8::Value>& info);
   static void StartRx(const Nan::FunctionCallbackInfo<v8::Value>& info);

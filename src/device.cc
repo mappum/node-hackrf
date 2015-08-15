@@ -52,6 +52,8 @@ void Device::Init() {
   Nan::SetPrototypeMethod(tpl, "setLNAGain", SetLNAGain);
   Nan::SetPrototypeMethod(tpl, "setVGAGain", SetVGAGain);
   Nan::SetPrototypeMethod(tpl, "setTxGain", SetTxGain);
+  Nan::SetPrototypeMethod(tpl, "setAmpEnable", SetAmpEnable);
+  Nan::SetPrototypeMethod(tpl, "setAntennaEnable", SetAntennaEnable);
   Nan::SetPrototypeMethod(tpl, "setSampleRate", SetSampleRate);
   Nan::SetPrototypeMethod(tpl, "getVersion", GetVersion);
   Nan::SetPrototypeMethod(tpl, "startRx", StartRx);
@@ -127,6 +129,20 @@ void Device::SetTxGain(const Nan::FunctionCallbackInfo<Value>& info) {
   Device* d = ObjectWrap::Unwrap<Device>(info.Holder());
   uint64_t level = uint64_t(info[0]->Uint32Value());
   hackrf_set_txvga_gain(d->device, level);
+  info.GetReturnValue().Set(info.Holder());
+}
+
+void Device::SetAmpEnable(const Nan::FunctionCallbackInfo<Value>& info) {
+  Device* d = ObjectWrap::Unwrap<Device>(info.Holder());
+  uint8_t enable = uint64_t(info[0]->Uint32Value());
+  hackrf_set_amp_enable(d->device, enable);
+  info.GetReturnValue().Set(info.Holder());
+}
+
+void Device::SetAntennaEnable(const Nan::FunctionCallbackInfo<Value>& info) {
+  Device* d = ObjectWrap::Unwrap<Device>(info.Holder());
+  uint8_t enable = uint64_t(info[0]->Uint32Value());
+  hackrf_set_antenna_enable(d->device, enable);
   info.GetReturnValue().Set(info.Holder());
 }
 

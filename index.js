@@ -28,6 +28,14 @@ module.exports = function () {
     api.device.setLNAGain(n)
   }
 
+  api.setAmpEnable = function (n) {
+    api.device.setAmpEnable(n)
+  }
+
+  api.setAntennaEnable = function (n) {
+    api.device.setAntennaEnable(n)
+  }
+
   api.setVGAGain = function (n) {
     if (typeof n !== 'number') throw new Error('VGA gain should be a number')
     api.device.setVGAGain(n)
