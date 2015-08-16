@@ -10,6 +10,8 @@ void Devices(const FunctionCallbackInfo<Value>& args) {
   HandleScope scope(isolate);
 
   hackrf_device_list_t* list = hackrf_device_list();
+  if (!list->devicecount) return Nan::ThrowError("No hackrf connected");
+
   Local<Array> devices = Nan::New<Array>(list->devicecount);
   for(int i = 0; i < list->devicecount; i++) {
     Local<Object> device = Nan::New<Object>();
