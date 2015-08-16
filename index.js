@@ -57,7 +57,7 @@ module.exports = function () {
   }
 
   api.stopRx = function (cb) {
-    api.device.stopRx(cb)
+    api.device.stopRx(cb || noop)
   }
 
   api.startTx = function (cb) {
@@ -71,7 +71,7 @@ module.exports = function () {
   }
 
   api.stopTx = function (cb) {
-    api.device.stopTx(cb)
+    api.device.stopTx(cb || noop)
   }
 
   return api
