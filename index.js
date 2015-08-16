@@ -1,3 +1,5 @@
+require('segfault-handler').registerHandler()
+
 var hackrf = require('bindings')('hackrf')
 
 module.exports = function () {
@@ -54,8 +56,8 @@ module.exports = function () {
     })
   }
 
-  api.stopRx = function () {
-    api.device.stopRx()
+  api.stopRx = function (cb) {
+    api.device.stopRx(cb)
   }
 
   api.startTx = function (cb) {
@@ -68,8 +70,8 @@ module.exports = function () {
     })
   }
 
-  api.stopTx = function () {
-    api.device.stopTx()
+  api.stopTx = function (cb) {
+    api.device.stopTx(cb)
   }
 
   return api

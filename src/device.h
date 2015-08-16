@@ -21,7 +21,8 @@ class Device : public Nan::ObjectWrap {
   Nan::Callback* onTx;
   uv_async_t asyncRx;
   uv_async_t asyncTx;
-  bindings_sem_t semaphore;
+  bindings_sem_t semaphoreRx;
+  bindings_sem_t semaphoreTx;
 
   hackrf_transfer* transfer;
 
@@ -40,6 +41,7 @@ class Device : public Nan::ObjectWrap {
   static void StopRx(const Nan::FunctionCallbackInfo<v8::Value>& info);
   static void StartTx(const Nan::FunctionCallbackInfo<v8::Value>& info);
   static void StopTx(const Nan::FunctionCallbackInfo<v8::Value>& info);
+  static void Close(const Nan::FunctionCallbackInfo<v8::Value>& info);
 
   static void EndTx(const Nan::FunctionCallbackInfo<v8::Value>& info);
   static void EndRx(const Nan::FunctionCallbackInfo<v8::Value>& info);

@@ -21,6 +21,18 @@ class HackWorker : public Nan::AsyncWorker {
       case 2:
       hackrf_set_sample_rate_manual(d->device, arg, 1);
       break;
+
+      case 3:
+      hackrf_stop_rx(d->device);
+      break;
+
+      case 4:
+      hackrf_stop_tx(d->device);
+      break;
+
+      case 5:
+      hackrf_close(d->device);
+      break;
     }
   }
 
@@ -62,6 +74,7 @@ void Device::Init() {
   Nan::SetPrototypeMethod(tpl, "stopTx", StopTx);
   Nan::SetPrototypeMethod(tpl, "endTx", EndTx);
   Nan::SetPrototypeMethod(tpl, "endRx", EndRx);
+  Nan::SetPrototypeMethod(tpl, "close", Close);
 
   constructor.Reset(tpl->GetFunction());
 }
@@ -80,7 +93,8 @@ Local<Object> Device::NewInstance(hackrf_device* hd) {
 
   Device* d = ObjectWrap::Unwrap<Device>(instance);
   d->device = hd;
-  semaphore_init(&(d->semaphore));
+  semaphore_init(&(d->semaphoreRx));
+  semaphore_init(&(d->semaphoreTx));
   uv_async_init(uv_default_loop(), &d->asyncRx, Device::CallRxCallback);
   uv_async_init(uv_default_loop(), &d->asyncTx, Device::CallTxCallback);
 
@@ -165,25 +179,34 @@ void Device::StartRx(const Nan::FunctionCallbackInfo<Value>& info) {
 void Device::StartTx(const Nan::FunctionCallbackInfo<Value>& info) {
   Device* d = ObjectWrap::Unwrap<Device>(info.Holder());
   d->onTx = new Nan::Callback(info[0].As<Function>());
-  hackrf_start_tx(d->device, Device::OnTx, d);
+  int res = hackrf_start_tx(d->device, Device::OnTx, d);
   info.GetReturnValue().Set(info.Holder());
 }
 
 void Device::StopRx(const Nan::FunctionCallbackInfo<Value>& info) {
   Device* d = ObjectWrap::Unwrap<Device>(info.Holder());
-  hackrf_stop_rx(d->device);
+  Local<Function> callback = info[0].As<Function>();
+  Nan::AsyncQueueWorker(new HackWorker(new Nan::Callback(callback), d, 3, 0));
   info.GetReturnValue().Set(info.Holder());
 }
 
 void Device::StopTx(const Nan::FunctionCallbackInfo<Value>& info) {
   Device* d = ObjectWrap::Unwrap<Device>(info.Holder());
-  hackrf_stop_tx(d->device);
+  Local<Function> callback = info[0].As<Function>();
+  Nan::AsyncQueueWorker(new HackWorker(new Nan::Callback(callback), d, 4, 0));
+  info.GetReturnValue().Set(info.Holder());
+}
+
+void Device::Close(const Nan::FunctionCallbackInfo<Value>& info) {
+  Device* d = ObjectWrap::Unwrap<Device>(info.Holder());
+  Local<Function> callback = info[0].As<Function>();
+  Nan::AsyncQueueWorker(new HackWorker(new Nan::Callback(callback), d, 5, 0));
   info.GetReturnValue().Set(info.Holder());
 }
 
 void Device::EndRx(const Nan::FunctionCallbackInfo<Value>& info) {
   Device* d = ObjectWrap::Unwrap<Device>(info.Holder());
-  semaphore_signal(&(d->semaphore));
+  semaphore_signal(&(d->semaphoreRx));
   info.GetReturnValue().Set(info.Holder());
 }
 
@@ -196,7 +219,7 @@ void Device::EndTx(const Nan::FunctionCallbackInfo<Value>& info) {
   char *data = node::Buffer::Data(buffer);
 
   memcpy(transfer->buffer, data, len);
-  semaphore_signal(&(d->semaphore));
+  semaphore_signal(&(d->semaphoreTx));
 
   info.GetReturnValue().Set(info.Holder());
 }
@@ -205,7 +228,7 @@ int Device::OnTx(hackrf_transfer* transfer) {
   Device* d = (Device*) transfer->tx_ctx;
   d->asyncTx.data = transfer;
   uv_async_send(&(d->asyncTx));
-  semaphore_wait(&(d->semaphore));
+  semaphore_wait(&(d->semaphoreTx));
   return 0;
 }
 
@@ -213,7 +236,7 @@ int Device::OnRx(hackrf_transfer* transfer) {
   Device* d = (Device*) transfer->rx_ctx;
   d->asyncRx.data = transfer;
   uv_async_send(&(d->asyncRx));
-  semaphore_wait(&(d->semaphore));
+  semaphore_wait(&(d->semaphoreRx));
   return 0;
 }
 

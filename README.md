@@ -51,7 +51,7 @@ device.startRx(function (data, cb) {
 })
 ```
 
-#### `device.stopRx()`
+#### `device.stopRx([callback])`
 
 Stop receiving data.
 
@@ -67,7 +67,7 @@ device.startTx(function (data, cb) {
 })
 ```
 
-#### `device.stopTx()`
+#### `device.stopTx([callback])`
 
 Stop transmitting data.
 
