@@ -74,6 +74,10 @@ module.exports = function () {
     api.device.stopTx(cb || noop)
   }
 
+  api.close = function (cb) {
+    api.device.close(cb)
+  }
+
   return api
 }
 

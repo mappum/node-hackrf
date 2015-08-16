@@ -71,6 +71,10 @@ device.startTx(function (data, cb) {
 
 Stop transmitting data.
 
+#### `device.close([callback])`
+
+Release the resources for the device (allowing it to be used by another process).
+
 ## Licence
 
 MIT
