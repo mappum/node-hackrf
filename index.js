@@ -1,4 +1,4 @@
-require('segfault-handler').registerHandler()
+if (process.env.DEBUG) require('segfault-handler').registerHandler()
 
 var hackrf = require('bindings')('hackrf')
 
