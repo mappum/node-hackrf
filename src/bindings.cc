@@ -5,12 +5,24 @@
 
 using namespace v8;
 
-void Devices(const FunctionCallbackInfo<Value>& args) {
+void OpenDevice(const Nan::FunctionCallbackInfo<v8::Value>& info) {
+  int index = info[0]->Uint32Value();
+
+  hackrf_device_list_t* list = hackrf_device_list();
+  if (index >= list->devicecount) return Nan::ThrowError("Invalid device index");
+
+  hackrf_device* device;
+  hackrf_device_list_open(list, index, &device);
+  hackrf_device_list_free(list);
+
+  info.GetReturnValue().Set(Device::NewInstance(device));
+}
+
+void Devices(const FunctionCallbackInfo<Value>& info) {
   Isolate* isolate = Isolate::GetCurrent();
   HandleScope scope(isolate);
 
   hackrf_device_list_t* list = hackrf_device_list();
-  if (!list->devicecount) return Nan::ThrowError("No hackrf connected");
 
   Local<Array> devices = Nan::New<Array>(list->devicecount);
   for(int i = 0; i < list->devicecount; i++) {
@@ -24,14 +36,10 @@ void Devices(const FunctionCallbackInfo<Value>& args) {
 
     devices->Set(i, device);
   }
-  //hackrf_device_list_free(list);
 
-  //devices->Set(Nan::New("open").ToLocalChecked(), )
-
-  hackrf_device* device;
-  hackrf_device_list_open(list, 0, &device);
-
-  args.GetReturnValue().Set(Device::NewInstance(device));
+  Nan::SetMethod(devices, "_open", OpenDevice);
+  hackrf_device_list_free(list);
+  info.GetReturnValue().Set(devices);
 }
 
 void InitAll(Handle<Object> exports) {

@@ -3,13 +3,17 @@
 var minimist = require('minimist')
 var argv = minimist(process.argv.slice(2))
 var hackrf = require('./')
-var d = hackrf()
+
+var devices = hackrf()
+console.log('Found %d HackRF devices', devices.length)
+if (devices.length === 0) throw new Error('No devices connected')
+var d = devices.open(0)
 
 var pulse = 0
 var low = Infinity
 var high = 0
 
-console.log('hackrf version is %s', d.getVersion())
+console.log('HackRF version is %s', d.getVersion())
 
 function parse (f) {
   if (typeof f === 'number') return f

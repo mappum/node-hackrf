@@ -8,13 +8,17 @@ npm install hackrf
 
 ## API
 
-#### `var device = hackrf()`
+#### `var devices = hackrf()`
 
-Returns the first device found
+Returns an array containing information about the connected HackRF devices. If no devices are connected, an empty array will be returned.
 
-#### `version = device.getVersion()`
+#### `var device = devices.open(index)`
 
-Returns the `hackrf` native version.
+Opens and returns the device in the array of devices with index `index`.
+
+#### `device.getVersion()`
+
+Returns the `hackrf` firmware version.
 
 #### `device.setFrequency(hz, [callback])`
 
@@ -75,6 +79,6 @@ Stop transmitting data.
 
 Release the resources for the device (allowing it to be used by another process).
 
-## Licence
+## License
 
 MIT

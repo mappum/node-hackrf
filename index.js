@@ -3,82 +3,88 @@ if (process.env.DEBUG) require('segfault-handler').registerHandler()
 var hackrf = require('bindings')('hackrf')
 
 module.exports = function () {
-  var api = {}
-  d = api.device = hackrf.devices() // leak on purpose to fix gc thing
-
-  api.getVersion = function () {
-    return api.device.getVersion()
+  var devices = hackrf.devices()
+  devices.open = function (i) {
+    var device = devices._open(i)
+    return new API(device)
   }
+  return devices
+}
 
-  api.setFrequency = function (n, cb) {
-    if (typeof n !== 'number') throw new Error('Frequency should be a number')
-    api.device.setFrequency(n, cb || noop)
-  }
+var API = function (device) {
+  this.device = device
+}
 
-  api.setBandwidth = function (n, cb) {
-    if (typeof n !== 'number') throw new Error('Bandwidth should be a number')
-    api.device.setBandwidth(n, cb || noop)
-  }
+API.prototype.getVersion = function () {
+  return this.device.getVersion()
+}
 
-  api.setSampleRate = function (n, cb) {
-    if (typeof n !== 'number') throw new Error('Sample rate should be a number')
-    api.device.setSampleRate(n, cb || noop)
-  }
+API.prototype.setFrequency = function (n, cb) {
+  if (typeof n !== 'number') throw new Error('Frequency should be a number')
+  this.device.setFrequency(n, cb || noop)
+}
 
-  api.setLNAGain = function (n) {
-    if (typeof n !== 'number') throw new Error('LNA gain should be a number')
-    api.device.setLNAGain(n)
-  }
+API.prototype.setBandwidth = function (n, cb) {
+  if (typeof n !== 'number') throw new Error('Bandwidth should be a number')
+  this.device.setBandwidth(n, cb || noop)
+}
 
-  api.setAmpEnable = function (n) {
-    api.device.setAmpEnable(n)
-  }
+API.prototype.setSampleRate = function (n, cb) {
+  if (typeof n !== 'number') throw new Error('Sample rate should be a number')
+  this.device.setSampleRate(n, cb || noop)
+}
 
-  api.setAntennaEnable = function (n) {
-    api.device.setAntennaEnable(n)
-  }
+API.prototype.setLNAGain = function (n) {
+  if (typeof n !== 'number') throw new Error('LNA gain should be a number')
+  this.device.setLNAGain(n)
+}
 
-  api.setVGAGain = function (n) {
-    if (typeof n !== 'number') throw new Error('VGA gain should be a number')
-    api.device.setVGAGain(n)
-  }
+API.prototype.setAmpEnable = function (n) {
+  this.device.setAmpEnable(n)
+}
 
-  api.setTxGain = function (n) {
-    if (typeof n !== 'number') throw new Error('Tx gain should be a number')
-    api.device.setTxGain(n)
-  }
+API.prototype.setAntennaEnable = function (n) {
+  this.device.setAntennaEnable(n)
+}
 
-  api.startRx = function (cb) {
-    api.device.startRx(function (data) {
-      cb(data, function () {
-        api.device.endRx()
-      })
+API.prototype.setVGAGain = function (n) {
+  if (typeof n !== 'number') throw new Error('VGA gain should be a number')
+  this.device.setVGAGain(n)
+}
+
+API.prototype.setTxGain = function (n) {
+  if (typeof n !== 'number') throw new Error('Tx gain should be a number')
+  this.device.setTxGain(n)
+}
+
+API.prototype.startRx = function (cb) {
+  this.device.startRx(function (data) {
+    cb(data, function () {
+      this.device.endRx()
     })
-  }
+  })
+}
 
-  api.stopRx = function (cb) {
-    api.device.stopRx(cb || noop)
-  }
+API.prototype.stopRx = function (cb) {
+  this.device.stopRx(cb || noop)
+}
 
-  api.startTx = function (cb) {
-    var buf = new Buffer(0)
-    api.device.startTx(function (max) {
-      if (max > buf.length) buf = new Buffer(max)
-      cb(max !== buf.length ? buf.slice(0, max) : buf, function () {
-        api.device.endTx(buf)
-      })
+API.prototype.startTx = function (cb) {
+  var buf = new Buffer(0)
+  this.device.startTx(function (max) {
+    if (max > buf.length) buf = new Buffer(max)
+    cb(max !== buf.length ? buf.slice(0, max) : buf, function () {
+      this.device.endTx(buf)
     })
-  }
+  })
+}
 
-  api.stopTx = function (cb) {
-    api.device.stopTx(cb || noop)
-  }
+API.prototype.stopTx = function (cb) {
+  this.device.stopTx(cb || noop)
+}
 
-  api.close = function (cb) {
-    api.device.close(cb)
-  }
-
-  return api
+API.prototype.close = function (cb) {
+  this.device.close(cb)
 }
 
 function noop () {}
