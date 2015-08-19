@@ -1,6 +1,6 @@
 {
   "name": "hackrf",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Control a HackRF device (e.g. Jawbreaker, HackRF One, or Rad1o) from node",
   "main": "index.js",
   "scripts": {
