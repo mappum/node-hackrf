@@ -58,9 +58,10 @@ API.prototype.setTxGain = function (n) {
 }
 
 API.prototype.startRx = function (cb) {
+  var self = this
   this.device.startRx(function (data) {
     cb(data, function () {
-      this.device.endRx()
+      self.device.endRx()
     })
   })
 }
@@ -70,11 +71,12 @@ API.prototype.stopRx = function (cb) {
 }
 
 API.prototype.startTx = function (cb) {
+  var self = this
   var buf = new Buffer(0)
   this.device.startTx(function (max) {
     if (max > buf.length) buf = new Buffer(max)
     cb(max !== buf.length ? buf.slice(0, max) : buf, function () {
-      this.device.endTx(buf)
+      self.device.endTx(buf)
     })
   })
 }
