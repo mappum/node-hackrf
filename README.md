@@ -2,6 +2,8 @@
 
 Control a HackRF device (e.g. Jawbreaker, HackRF One, or Rad1o) from node
 
+This is a low-level binding to `libhackrf`. If you'd like a nice stream interface, try [`hackrf-stream`](https://github.com/mappum/hackrf-stream).
+
 ```
 npm install hackrf
 ```
