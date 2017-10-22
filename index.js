@@ -1,6 +1,6 @@
 if (process.env.HACKRF_DEBUG) require('segfault-handler').registerHandler()
 
-var hackrf = require('bindings')('hackrf')
+var hackrf = require('node-gyp-build')(__dirname)
 
 module.exports = function () {
   var devices = hackrf.devices()

@@ -4,8 +4,9 @@
   "description": "Control a HackRF device (e.g. Jawbreaker, HackRF One, or Rad1o) from node",
   "main": "index.js",
   "scripts": {
-    "install": "prebuild --install",
-    "prebuild": "prebuild --all --strip --verbose"
+    "install": "node-gyp-build",
+    "prebuild": "prebuildify -a",
+    "prebuild-ia32": "prebuildify -a --arch ia32"
   },
   "repository": {
     "type": "git",
@@ -24,10 +25,12 @@
   "author": "Matt Bell <mappum@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "bindings": "^1.2.1",
     "minimist": "^1.1.3",
     "nan": "^2.0.5",
-    "prebuild": "^6.0.0"
+    "node-gyp-build": "^3.2.2"
   },
-  "gyp": true
+  "gyp": true,
+  "devDependencies": {
+    "prebuildify": "^2.4.3"
+  }
 }
