@@ -29,10 +29,7 @@ void Devices(const FunctionCallbackInfo<Value>& info) {
     Local<Object> device = Nan::New<Object>();
     device->Set(Nan::New("boardId").ToLocalChecked(), Nan::New(list->usb_board_ids[i]));
     device->Set(Nan::New("usbIndex").ToLocalChecked(), Nan::New(list->usb_device_index[i]));
-
-    Local<Value> serialNumber = Nan::Null();
-    if(list->usb_device_index[i] != 0) serialNumber = Nan::New(list->usb_device_index[i]);
-    device->Set(Nan::New("serialNumber").ToLocalChecked(), serialNumber);
+    device->Set(Nan::New("serialNumber").ToLocalChecked(), Nan::New<String>(list->serial_numbers[i]).ToLocalChecked());
 
     devices->Set(i, device);
   }
