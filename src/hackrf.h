@@ -47,6 +47,10 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 #endif
 
+#define SAMPLES_PER_BLOCK 8192
+#define BYTES_PER_BLOCK 16384
+#define MAX_SWEEP_RANGES 10
+
 enum hackrf_error {
 	HACKRF_SUCCESS = 0,
 	HACKRF_TRUE = 1,
@@ -59,6 +63,7 @@ enum hackrf_error {
 	HACKRF_ERROR_STREAMING_THREAD_ERR = -1002,
 	HACKRF_ERROR_STREAMING_STOPPED = -1003,
 	HACKRF_ERROR_STREAMING_EXIT_CALLED = -1004,
+	HACKRF_ERROR_USB_API_VERSION = -1005,
 	HACKRF_ERROR_OTHER = -9999,
 };
 
@@ -66,6 +71,7 @@ enum hackrf_board_id {
 	BOARD_ID_JELLYBEAN  = 0,
 	BOARD_ID_JAWBREAKER = 1,
 	BOARD_ID_HACKRF_ONE = 2,
+	BOARD_ID_RAD1O = 3,
 	BOARD_ID_INVALID = 0xFF,
 };
 
@@ -82,13 +88,21 @@ enum rf_path_filter {
 	RF_PATH_FILTER_HIGH_PASS = 2,
 };
 
-typedef enum {
-	TRANSCEIVER_MODE_OFF = 0,
-	TRANSCEIVER_MODE_RX = 1,
-	TRANSCEIVER_MODE_TX = 2,
-	TRANSCEIVER_MODE_SS = 3,
-	TRANSCEIVER_MODE_CPLD_UPDATE = 4
-} transceiver_mode_t;
+enum operacake_ports {
+	OPERACAKE_PA1 = 0,
+	OPERACAKE_PA2 = 1,
+	OPERACAKE_PA3 = 2,
+	OPERACAKE_PA4 = 3,
+	OPERACAKE_PB1 = 4,
+	OPERACAKE_PB2 = 5,
+	OPERACAKE_PB3 = 6,
+	OPERACAKE_PB4 = 7,
+};
+
+enum sweep_style {
+	LINEAR = 0,
+	INTERLEAVED = 1,
+};
 
 typedef struct hackrf_device hackrf_device;
 
@@ -128,6 +142,9 @@ extern "C"
 extern ADDAPI int ADDCALL hackrf_init();
 extern ADDAPI int ADDCALL hackrf_exit();
 
+extern ADDAPI const char* ADDCALL hackrf_library_version();
+extern ADDAPI const char* ADDCALL hackrf_library_release();
+
 extern ADDAPI hackrf_device_list_t* ADDCALL hackrf_device_list();
 extern ADDAPI int ADDCALL hackrf_device_list_open(hackrf_device_list_t *list, int idx, hackrf_device** device);
 extern ADDAPI void ADDCALL hackrf_device_list_free(hackrf_device_list_t *list);
@@ -166,6 +183,7 @@ extern ADDAPI int ADDCALL hackrf_cpld_write(hackrf_device* device,
 		
 extern ADDAPI int ADDCALL hackrf_board_id_read(hackrf_device* device, uint8_t* value);
 extern ADDAPI int ADDCALL hackrf_version_string_read(hackrf_device* device, char* version, uint8_t length);
+extern ADDAPI int ADDCALL hackrf_usb_api_version_read(hackrf_device* device, uint16_t* version);
 
 extern ADDAPI int ADDCALL hackrf_set_freq(hackrf_device* device, const uint64_t freq_hz);
 extern ADDAPI int ADDCALL hackrf_set_freq_explicit(hackrf_device* device,
@@ -204,8 +222,32 @@ extern ADDAPI uint32_t ADDCALL hackrf_compute_baseband_filter_bw_round_down_lt(c
 /* Compute best default value depending on sample rate (auto filter) */
 extern ADDAPI uint32_t ADDCALL hackrf_compute_baseband_filter_bw(const uint32_t bandwidth_hz);
 
+/* All features below require USB API version 0x1002 or higher) */
+
+/* set hardware sync mode  */
+extern ADDAPI int ADDCALL hackrf_set_hw_sync_mode(hackrf_device* device, const uint8_t value);
+
+/* Start sweep mode */
+extern ADDAPI int ADDCALL hackrf_init_sweep(hackrf_device* device,
+		const uint16_t* frequency_list, const int num_ranges,
+		const uint32_t num_bytes, const uint32_t step_width,
+		const uint32_t offset, const enum sweep_style style);
+
+/* Operacake functions */
+extern ADDAPI int ADDCALL hackrf_get_operacake_boards(hackrf_device* device, uint8_t* boards);
+extern ADDAPI int ADDCALL hackrf_set_operacake_ports(hackrf_device* device,
+                                       uint8_t address,
+                                       uint8_t port_a,
+                                       uint8_t port_b);
+
+extern ADDAPI int ADDCALL hackrf_reset(hackrf_device* device);
+
+extern ADDAPI int ADDCALL hackrf_set_operacake_ranges(hackrf_device* device,
+                                                      uint8_t* ranges,
+                                                      uint8_t num_ranges);
+
 #ifdef __cplusplus
 } // __cplusplus defined.
 #endif
 
-#endif//__HACKRF_H__
+#endif /*__HACKRF_H__*/
