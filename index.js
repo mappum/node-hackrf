@@ -86,7 +86,7 @@ API.prototype.stopTx = function (cb) {
 }
 
 API.prototype.close = function (cb) {
-  this.device.close(cb)
+  this.device.close(cb || noop)
 }
 
 function noop () {}
