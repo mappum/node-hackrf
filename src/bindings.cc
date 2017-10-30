@@ -26,8 +26,27 @@ void Devices(const FunctionCallbackInfo<Value>& info) {
 
   Local<Array> devices = Nan::New<Array>(list->devicecount);
   for(int i = 0; i < list->devicecount; i++) {
+    int result = HACKRF_SUCCESS;
+    uint8_t board_id = BOARD_ID_INVALID;
     Local<Object> device = Nan::New<Object>();
-    device->Set(Nan::New("boardId").ToLocalChecked(), Nan::New(list->usb_board_ids[i]));
+    hackrf_device* cdevice = NULL;
+
+    result = hackrf_device_list_open(list, i, &cdevice);
+    if (result != HACKRF_SUCCESS) {
+      return Nan::ThrowError("Could not open board");
+    }
+
+    result = hackrf_board_id_read(cdevice, &board_id);
+    if (result != HACKRF_SUCCESS) {
+      return Nan::ThrowError("Could not read board id");
+    }
+    device->Set(Nan::New("boardId").ToLocalChecked(), Nan::New(board_id));
+
+    result = hackrf_close(cdevice);
+    if (result != HACKRF_SUCCESS) {
+      return Nan::ThrowError("Could not close board");
+    }
+
     device->Set(Nan::New("usbIndex").ToLocalChecked(), Nan::New(list->usb_device_index[i]));
     device->Set(Nan::New("serialNumber").ToLocalChecked(), Nan::New<String>(list->serial_numbers[i]).ToLocalChecked());
 
