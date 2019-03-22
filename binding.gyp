@@ -15,7 +15,7 @@
                     'xcode_settings': {
                         'OTHER_LDFLAGS': [ '-framework', 'CoreFoundation', '-framework', 'IOKit' ],
                         'SDKROOT': 'macosx',
-                        'MACOSX_DEPLOYMENT_TARGET': '10.7',
+                        'MACOSX_DEPLOYMENT_TARGET': '10.14',
                     },
                 }]
             ]
