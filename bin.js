@@ -1,17 +1,17 @@
 #!/usr/bin/env node
 
-var minimist = require('minimist')
-var argv = minimist(process.argv.slice(2))
-var hackrf = require('./')
+const minimist = require('minimist')
+const argv = minimist(process.argv.slice(2))
+const hackrf = require('./')
 
-var devices = hackrf()
+const devices = hackrf()
 console.log('Found %d HackRF devices', devices.length)
 if (devices.length === 0) throw new Error('No devices connected')
-var d = devices.open(0)
+const d = devices.open(0)
 
-var pulse = 0
-var low = Infinity
-var high = 0
+let pulse = 0
+let low = Infinity
+let high = 0
 
 console.log('HackRF version is %s', d.getVersion())
 
@@ -32,11 +32,11 @@ if (argv.txGain) d.setTxGain(argv.txGain)
 
 if (argv.rxgraph) {
   d.startRx(function (data, cb) {
-    var total = 0
-    for(var i = 0; i < data.length; i++) total += data[i]
+    let total = 0
+    for(let i = 0; i < data.length; i++) total += data[i]
     if (total <= low) low = total
     if (total >= high) high = total
-    var a = (total - low) / (high - low)
+    let a = (total - low) / (high - low)
     if (a) a = Math.pow(a, 2)
     a = Math.max(0, a)
     console.log(new Array(Math.floor((a || 0) * 80)).join('#'))
@@ -53,7 +53,7 @@ if (argv.startrx) {
 
 if (argv.starttx) {
   d.startTx(function (b, cb) {
-    for (var i = 0; i < b.length; i++) b[i] = pulse
+    for (let i = 0; i < b.length; i++) b[i] = pulse
     pulse = 0
     cb()
   })

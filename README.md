@@ -10,11 +10,11 @@ npm install hackrf
 
 ## API
 
-#### `var devices = hackrf()`
+#### `const devices = hackrf()`
 
 Returns an array containing information about the connected HackRF devices. If no devices are connected, an empty array will be returned.
 
-#### `var device = devices.open(index)`
+#### `const device = devices.open(index)`
 
 Opens and returns the device in the array of devices with index `index`.
 
@@ -68,7 +68,7 @@ You should write the data you want to send to `data`.
 
 ``` js
 device.startTx(function (data, cb) {
-  for (var i = 0; i < data.length; i++) data[i] = 127
+  for (let i = 0; i < data.length; i++) data[i] = 127
   cb() // write the data
 })
 ```
