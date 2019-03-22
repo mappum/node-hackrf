@@ -1,17 +1,17 @@
 if (process.env.HACKRF_DEBUG) require('segfault-handler').registerHandler()
 
-var hackrf = require('node-gyp-build')(__dirname)
+const hackrf = require('node-gyp-build')(__dirname)
 
 module.exports = function () {
-  var devices = hackrf.devices()
+  const devices = hackrf.devices()
   devices.open = function (i) {
-    var device = devices._open(i)
+    const device = devices._open(i)
     return new API(device)
   }
   return devices
 }
 
-var API = function (device) {
+const API = function (device) {
   this.device = device
 }
 
@@ -58,7 +58,7 @@ API.prototype.setTxGain = function (n) {
 }
 
 API.prototype.startRx = function (cb) {
-  var self = this
+  const self = this
   this.device.startRx(function (data) {
     cb(data, function () {
       self.device.endRx()
@@ -71,8 +71,8 @@ API.prototype.stopRx = function (cb) {
 }
 
 API.prototype.startTx = function (cb) {
-  var self = this
-  var buf = new Buffer(0)
+  const self = this
+  let buf = new Buffer(0)
   this.device.startTx(function (max) {
     if (max > buf.length) buf = new Buffer(max)
     cb(max !== buf.length ? buf.slice(0, max) : buf, function () {
