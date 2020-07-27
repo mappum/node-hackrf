@@ -76,7 +76,7 @@ void Device::Init() {
   Nan::SetPrototypeMethod(tpl, "endRx", EndRx);
   Nan::SetPrototypeMethod(tpl, "close", Close);
 
-  constructor.Reset(tpl->GetFunction());
+  constructor.Reset(Nan::GetFunction(tpl).ToLocalChecked());
 }
 
 void Device::New(const Nan::FunctionCallbackInfo<Value>& info) {
@@ -89,7 +89,7 @@ Local<Object> Device::NewInstance(hackrf_device* hd) {
   Nan::EscapableHandleScope scope;
 
   Local<Function> cons = Nan::New<Function>(constructor);
-  Local<Object> instance = cons->NewInstance(0, 0);
+  Local<Object> instance = Nan::NewInstance(cons, 0, NULL).ToLocalChecked();
 
   Device* d = ObjectWrap::Unwrap<Device>(instance);
   d->device = hd;
@@ -103,7 +103,7 @@ Local<Object> Device::NewInstance(hackrf_device* hd) {
 
 void Device::SetFrequency(const Nan::FunctionCallbackInfo<Value>& info) {
   Device* d = ObjectWrap::Unwrap<Device>(info.Holder());
-  uint64_t freq = uint64_t(info[0]->Uint32Value());
+  uint64_t freq = uint64_t(Nan::To<uint32_t>(info[0]).FromJust());
   Local<Function> callback = info[1].As<Function>();
   Nan::AsyncQueueWorker(new HackWorker(new Nan::Callback(callback), d, 0, freq));
   info.GetReturnValue().Set(info.Holder());
@@ -111,7 +111,7 @@ void Device::SetFrequency(const Nan::FunctionCallbackInfo<Value>& info) {
 
 void Device::SetBandwidth(const Nan::FunctionCallbackInfo<Value>& info) {
   Device* d = ObjectWrap::Unwrap<Device>(info.Holder());
-  uint64_t bandwidth = uint64_t(info[0]->Uint32Value());
+  uint64_t bandwidth = uint64_t(Nan::To<uint32_t>(info[0]).FromJust());
   Local<Function> callback = info[1].As<Function>();
   Nan::AsyncQueueWorker(new HackWorker(new Nan::Callback(callback), d, 1, bandwidth));
   info.GetReturnValue().Set(info.Holder());
@@ -119,7 +119,7 @@ void Device::SetBandwidth(const Nan::FunctionCallbackInfo<Value>& info) {
 
 void Device::SetSampleRate(const Nan::FunctionCallbackInfo<Value>& info) {
   Device* d = ObjectWrap::Unwrap<Device>(info.Holder());
-  uint64_t freq = uint64_t(info[0]->Uint32Value());
+  uint64_t freq = uint64_t(Nan::To<uint32_t>(info[0]).FromJust());
   Local<Function> callback = info[1].As<Function>();
   Nan::AsyncQueueWorker(new HackWorker(new Nan::Callback(callback), d, 2, freq));
   info.GetReturnValue().Set(info.Holder());
@@ -127,35 +127,35 @@ void Device::SetSampleRate(const Nan::FunctionCallbackInfo<Value>& info) {
 
 void Device::SetLNAGain(const Nan::FunctionCallbackInfo<Value>& info) {
   Device* d = ObjectWrap::Unwrap<Device>(info.Holder());
-  uint64_t level = uint64_t(info[0]->Uint32Value());
+  uint64_t level = uint64_t(Nan::To<uint32_t>(info[0]).FromJust());
   hackrf_set_lna_gain(d->device, level);
   info.GetReturnValue().Set(info.Holder());
 }
 
 void Device::SetVGAGain(const Nan::FunctionCallbackInfo<Value>& info) {
   Device* d = ObjectWrap::Unwrap<Device>(info.Holder());
-  uint64_t level = uint64_t(info[0]->Uint32Value());
+  uint64_t level = uint64_t(Nan::To<uint32_t>(info[0]).FromJust());
   hackrf_set_vga_gain(d->device, level);
   info.GetReturnValue().Set(info.Holder());
 }
 
 void Device::SetTxGain(const Nan::FunctionCallbackInfo<Value>& info) {
   Device* d = ObjectWrap::Unwrap<Device>(info.Holder());
-  uint64_t level = uint64_t(info[0]->Uint32Value());
+  uint64_t level = uint64_t(Nan::To<uint32_t>(info[0]).FromJust());
   hackrf_set_txvga_gain(d->device, level);
   info.GetReturnValue().Set(info.Holder());
 }
 
 void Device::SetAmpEnable(const Nan::FunctionCallbackInfo<Value>& info) {
   Device* d = ObjectWrap::Unwrap<Device>(info.Holder());
-  uint8_t enable = uint64_t(info[0]->Uint32Value());
+  uint8_t enable = uint64_t(Nan::To<uint32_t>(info[0]).FromJust());
   hackrf_set_amp_enable(d->device, enable);
   info.GetReturnValue().Set(info.Holder());
 }
 
 void Device::SetAntennaEnable(const Nan::FunctionCallbackInfo<Value>& info) {
   Device* d = ObjectWrap::Unwrap<Device>(info.Holder());
-  uint8_t enable = uint64_t(info[0]->Uint32Value());
+  uint8_t enable = uint64_t(Nan::To<uint32_t>(info[0]).FromJust());
   hackrf_set_antenna_enable(d->device, enable);
   info.GetReturnValue().Set(info.Holder());
 }
